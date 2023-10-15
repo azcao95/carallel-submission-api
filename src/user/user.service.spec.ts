@@ -12,9 +12,6 @@ const db = {
   },
   post: {
     findMany: jest.fn(),
-  },
-  readEvent: {
-    findMany: jest.fn(),
   }
 }
 
@@ -39,13 +36,11 @@ describe('UserService', () => {
     jest.clearAllMocks();
   });
 
-  const mockUuid = faker.string.uuid();
   const mockPostId = faker.string.uuid();
   const mockUserId = faker.string.uuid();
-  const mockReadEventId = faker.string.uuid();
 
   const mockUser = {
-    id: mockUuid,
+    id: mockUserId,
     email: faker.internet.email(),
     username: faker.internet.userName()
   }
@@ -57,20 +52,15 @@ describe('UserService', () => {
     userId: mockUserId
   }
 
-  const mockReadEvent = {
-    id: mockReadEventId,
-    userId: mockUserId,
-    postId: mockPostId
-  }
   describe('UserService', () => {
     it('should call prisma to find one user', async () => {
       db.user.findUnique.mockResolvedValue(mockUser);
 
-      const result = await service.findOne(mockUuid);
+      const result = await service.findOne(mockUserId);
 
       expect(db.user.findUnique).toHaveBeenCalledWith({
         where: {
-          id: mockUuid
+          id: mockUserId
         }
       });
 
@@ -100,11 +90,11 @@ describe('UserService', () => {
     it('should call prisma to remove a user', async () => {
       db.user.delete.mockResolvedValue(mockUser);
 
-      const result = await service.remove(mockUuid);
+      const result = await service.remove(mockUserId);
 
       expect(db.user.delete).toHaveBeenCalledWith({
         where: {
-          id: mockUuid
+          id: mockUserId
         }
       });
 
@@ -114,11 +104,11 @@ describe('UserService', () => {
     it('should call prisma to remove a user', async () => {
       db.user.delete.mockResolvedValue(mockUser);
 
-      const result = await service.remove(mockUuid);
+      const result = await service.remove(mockUserId);
 
       expect(db.user.delete).toHaveBeenCalledWith({
         where: {
-          id: mockUuid
+          id: mockUserId
         }
       });
 
@@ -126,11 +116,35 @@ describe('UserService', () => {
     });
 
     it('should call prisma to get posts user authored', async () => {
-      expect(service).toBeDefined();
+      db.post.findMany.mockResolvedValue([mockPost]);
+      
+      const result = await service.findPosts(mockUserId);
+
+      expect(db.post.findMany).toHaveBeenCalledWith({
+        where: {
+          userId: mockUserId
+        }
+      });
+
+      expect(result).toStrictEqual([mockPost]);
     });
 
     it('should call prisma to get read history', async () => {
-      expect(service).toBeDefined();
+      db.post.findMany.mockResolvedValue([mockPost]);
+
+      const result = await service.findReadPosts(mockUserId);
+
+      expect(db.post.findMany).toHaveBeenCalledWith({
+        where: {
+          readEvent: {
+            some: {
+              userId: mockUserId
+            }
+          }
+        }
+      });
+
+      expect(result).toStrictEqual([mockPost]);
     });
   })
 });

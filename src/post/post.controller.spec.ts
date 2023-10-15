@@ -2,13 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PostController } from './post.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { PostService } from './post.service';
+import { faker } from '@faker-js/faker';
+import exp from 'constants';
+import { CreatePostDto } from './dtos/create-post.input';
+import { mock } from 'node:test';
+import { UpdatePostDto } from './dtos/update-post.input';
 
 const postService = {
-  findOne: jest.fn(),
-  findMany: jest.fn(),
-  update: jest.fn(),
-  delete: jest.fn(),
-  readCount: jest.fn()
+  findPost: jest.fn(),
+  findAll: jest.fn(),
+  updatePost: jest.fn(),
+  deletePost: jest.fn(),
+  countViews: jest.fn()
 }
 
 describe('PostController', () => {
@@ -32,25 +37,65 @@ describe('PostController', () => {
     controller = module.get<PostController>(PostController);
   });
 
+  const mockPostId = faker.string.uuid();
+  const mockUserId = faker.string.uuid();
+
+  const mockPost = {
+    id: mockPostId,
+    title: faker.word.words(4),
+    content: faker.word.words(100),
+    userId: mockUserId
+  }
+
   describe('PostController', () => {
     it('should call post service to find one post', async () => {
-      expect(controller).toBeDefined();
+      postService.findPost.mockResolvedValue(mockPost);
+
+      const result = await controller.findOne(mockPostId);
+
+      expect(postService.findPost).toHaveBeenCalledWith(mockPostId);
+      expect(result).toEqual(mockPost);
     });
   
     it('should call post service to find all posts', async () => {
-      expect(controller).toBeDefined();
+      postService.findAll.mockResolvedValue([mockPost]);
+
+      const result = await controller.findAll();
+
+      expect(postService.findAll).toHaveBeenCalled();
+      expect(result).toEqual([mockPost]);
     });
   
     it('should call post service to update post with id', async () => {
-      expect(controller).toBeDefined();
+      postService.updatePost.mockResolvedValue(mockPost);
+
+      let mockUpdateInput = new UpdatePostDto();
+
+      mockUpdateInput.title = faker.word.words(3);
+      mockUpdateInput.content = faker.word.words(10);
+
+      const result = await controller.updatePost(mockPostId, mockUpdateInput);
+
+      expect(postService.updatePost).toHaveBeenCalledWith(mockPostId, mockUpdateInput);
+      expect(result).toEqual(mockPost);
     });
   
     it('should call post service to delete post with id', async () => {
-      expect(controller).toBeDefined();
+      postService.deletePost.mockResolvedValue(mockPost);
+
+      const result = await controller.deletePost(mockPostId);
+
+      expect(postService.deletePost).toHaveBeenCalledWith(mockPostId);
+      expect(result).toEqual(mockPost);
     });
   
     it('should call post service to get read count', async () => {
-      expect(controller).toBeDefined();
+      postService.countViews.mockResolvedValue(1);
+
+      const result = await controller.countViews(mockPostId);
+
+      expect(postService.countViews).toHaveBeenCalledWith(mockPostId);
+      expect(result).toEqual(1);
     });
   });
 });

@@ -10,7 +10,7 @@ const userService = {
   create: jest.fn(),
   remove: jest.fn(),
   findPosts: jest.fn(),
-  findReadEvents: jest.fn(),
+  findReadPosts: jest.fn(),
 }
 
 describe('UserController', () => {
@@ -38,12 +38,20 @@ describe('UserController', () => {
     jest.clearAllMocks();
   });
 
-  const mockUuid = faker.string.uuid();
+  const mockPostId = faker.string.uuid();
+  const mockUserId = faker.string.uuid();
 
   const mockUser = {
-    id: mockUuid,
+    id: mockUserId,
     email: faker.internet.email(),
     username: faker.internet.userName()
+  }
+
+  const mockPost = {
+    id: mockPostId,
+    title: faker.word.words(4),
+    content: faker.word.words(100),
+    userId: mockUserId
   }
 
 
@@ -76,18 +84,27 @@ describe('UserController', () => {
     it ('should call user service delete method', async () => {
       userService.remove.mockResolvedValue(mockUser);
 
-      const result = await controller.remove(mockUuid);
+      const result = await controller.remove(mockUserId);
 
       expect(userService.remove).toBeCalled();
       expect(result).toStrictEqual(mockUser);
     });
 
     it('should call user service to find posts', async () => {
-      expect(controller).toBeDefined();
+      userService.findPosts.mockResolvedValue([mockPost]);
+
+      const result = await controller.findPosts(mockUserId);
+
+      expect(userService.findPosts).toBeCalled();
+      expect(result).toStrictEqual(mockUser);
     });
 
-    it('should call user service to find read events', async () => {
-      expect(controller).toBeDefined();
-    });
+    it('should call user service to find read posts', async () => {
+      userService.findReadPosts.mockResolvedValue([mockPost]);
+
+      const result = await controller.findReadPosts(mockUserId);
+
+      expect(userService.findReadPosts).toBeCalled();
+      expect(result).toStrictEqual(mockUser);    });
   });
 });

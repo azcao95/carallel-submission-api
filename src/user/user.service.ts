@@ -11,7 +11,7 @@ export class UserService {
       where: {
         id
       }
-    }) 
+    });
   }
   
   async create(createUserDto: CreateUserDto) {
@@ -22,7 +22,7 @@ export class UserService {
         email,
         username,
       }
-    })
+    });
   }
   
   async remove(id: string) {
@@ -30,6 +30,26 @@ export class UserService {
       where: {
         id
       }
-    })
+    });
+  }
+
+  async findPosts(userId: string) {
+    return await this.prisma.post.findMany({
+      where: {
+        userId
+      }
+    });
+  }
+
+  async findReadPosts(userId: string) {
+    return await this.prisma.post.findMany({
+      where: {
+        readEvent: {
+          some: {
+            userId
+          }
+        }
+      }
+    });
   }
 }
