@@ -1,12 +1,13 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ReadEventService } from './read-event.service';
+import { CreateReadEventDto } from './dtos/create-read-event.input';
 
 @Controller('read-event')
 export class ReadEventController {
   constructor(private readEventService: ReadEventService) {}
 
-  @Post('read-event')
-  async createReadEvent(userId: string, postId: string) {
-    return await this.readEventService.createReadEvent(userId, postId);
+  @Post()
+  async createReadEvent(@Body() createReadEventDto: CreateReadEventDto) {
+    return await this.readEventService.createReadEvent(createReadEventDto.userId, createReadEventDto.postId);
   }
 }

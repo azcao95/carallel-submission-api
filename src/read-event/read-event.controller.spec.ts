@@ -41,6 +41,11 @@ describe('ReadEventController', () => {
     postId: mockPostId
   }
 
+  const mockCreateReadEventDto = {
+    userId: mockUserId,
+    postId: mockPostId
+  }
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
@@ -49,7 +54,7 @@ describe('ReadEventController', () => {
     it('should call readEventService create a read event for post and user', async () => {
       readEventService.createReadEvent.mockResolvedValue(mockReadEvent);
 
-      const result = await controller.createReadEvent(mockUserId, mockPostId);
+      const result = await controller.createReadEvent(mockCreateReadEventDto);
 
       expect(readEventService.createReadEvent).toHaveBeenCalledWith(mockUserId, mockPostId);
       expect(result).toEqual(mockReadEvent);

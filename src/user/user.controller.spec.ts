@@ -54,6 +54,10 @@ describe('UserController', () => {
     userId: mockUserId
   }
 
+  const mockRequest = {
+    user: mockUser
+  }
+
 
   describe('UserController', () => {
     it('should call user service find one method', async () => {

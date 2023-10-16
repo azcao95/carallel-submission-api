@@ -1,22 +1,20 @@
-// auth0.strategy.ts
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-auth0';
-import { AuthService } from './auth.service'; // Create your AuthService
 
 @Injectable()
-export class Auth0Strategy extends PassportStrategy(Strategy, 'auth0') {
-  constructor(private readonly authService: AuthService) {
+export class Auth0Strategy extends PassportStrategy(Strategy) {
+  constructor() {
     super({
       domain: process.env.AUTH0_DOMAIN, // Replace with your Auth0 domain
-      clientID: 'your-auth0-client-id', // Replace with your Auth0 client ID
-      clientSecret: 'your-auth0-client-secret', // Replace with your Auth0 client secret
-      callbackURL: 'http://localhost:3000/callback', // Replace with your callback URL
+      clientID: process.env.AUTH0_CLIENT_ID , // Replace with your Auth0 client ID
+      clientSecret: process.env.AUTH0_CLIENT_SECRET, // Replace with your Auth0 client secret
+      callbackURL: process.env.AUTH0_CALLBACK_URL, // Replace with your callback URL
+      state: false
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: any) {
-    // Add custom validation logic here, e.g., checking if the user exists
-    return this.authService.validateUser(profile);
+  async validate(_accessToken: string, _refreshToken: string, profile: any, done: Function) {
+    return done(null, profile);
   }
 }
