@@ -9,13 +9,13 @@ const prisma = new PrismaClient()
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // const jwtCheck = auth({
-  //   audience: 'https://alex-auth0-api.com',
-  //   issuerBaseURL: 'https://dev-kridiol0io8grymk.us.auth0.com/',
-  //   tokenSigningAlg: 'RS256'
-  // });
+  const jwtCheck = auth({
+    audience: 'https://alex-auth0-api.com',
+    issuerBaseURL: 'https://dev-kridiol0io8grymk.us.auth0.com/',
+    tokenSigningAlg: 'RS256'
+  });
 
-  // app.use(jwtCheck);
+  app.use(jwtCheck);
 
   await app.listen(3000);
 }

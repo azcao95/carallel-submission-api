@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ReadEventService } from './read-event.service';
 import { CreateReadEventDto } from './dtos/create-read-event.input';
 
-@Controller('read-event')
+@Controller('read-events')
 export class ReadEventController {
   constructor(private readEventService: ReadEventService) {}
 

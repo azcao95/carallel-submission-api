@@ -3,7 +3,7 @@ import { PostService } from './post.service';
 import { UpdatePostDto } from './dtos/update-post.input';
 import { CreatePostDto } from './dtos/create-post.input';
 
-@Controller('post')
+@Controller('posts')
 export class PostController {
   constructor(private postService: PostService) {}
 
